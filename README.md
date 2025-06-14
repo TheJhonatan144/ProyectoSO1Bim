@@ -5,7 +5,7 @@ Proyecto de Sistemas Operativos 1er Bimestre
 
 **Proyecto de Sistemas Operativos**  
 **Autores:** Jhona Torres (líder), Sabina Zabala, Sebastián Yánes, Geovanni ...  
-**Fecha:** Junio 2025
+**Fecha:** 17 Junio 2025
 
 ---
 
