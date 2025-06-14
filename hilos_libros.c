@@ -34,4 +34,47 @@ static void* simular_ventas(void* arg){
         pthread_mutex_unlock(&lock);
     }
 
+    pthread_mutex_lock(&lock);
+    totales[idx] = subtotal;
+    total_general += subtotal;
+    pthread_mutex_unlock(&lock);
+
+    pthread_exit(NULL);
+}
+
+int main(){
+    struct timespec inicio, fin;
+    pthread_t hilos[GRUPOS];
+    int indices[GRUPOS];
+    for(int i = 0; i < GRUPOS; i++)
+        indices[i] = i;
+    mostrar_tiempo_actual("Inicio(hilos - ventas de libros)");
+    clock_gettime(CLOCK_MONOTONIC, &inicio);
+
+    pthread_mutex_init(&lock, NULL);
+    for(int i = 0; i < GRUPOS; i++){
+        if(pthread_create(&hilos[i], NULL, simular_ventas_libros, &indices[i]) != 0){
+            perror("Error al crear el hilo");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (int i = 0; i < GRUPOS; i++){
+        pthread_join(hilos[i], NULL);
+    }
+
+    pthread_mutex_destroy(&lock);
+    clock_gettime(CLOCK_MONOTONIC, &fin);
+
+    mostrar_tiempo_actual("Fin(hilos - ventas de libros)");
+    double duracion = (fin.tv_sec - inicio.tv_sec) + (fin.tv_nsec - inicio.tv_nsec) / 1e9;
+    printf("Duracion total: %.3f segundos\n", duracion);
+    //Resumen de ventas
+
+    printf("\nResumen de ventas de Libros por Grupo:\n");
+    for(int i = 0; i < GRUPOS; i++){
+        printf("Grupo %c: Total ventas = $%.2f\n", 'A' + i, totales[i]);
+    }
+    printf("Total general: $%.2f\n", total_general);
+    return 0;
 }
