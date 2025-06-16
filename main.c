@@ -1,25 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "procesos_libros.h"
-#include "hilos_libros.h"
+#include "procesos_ventas.h"
+#include "hilos_ventas.h"
+#include "configuracion.h"
 
 int main(void) {
-    int opc;
+    int opcion;
     do {
-        printf("=== Simulación de Ventas de Libros ===\n");
-        printf("1) Ejecutar con PROCESOS (fork)\n");
-        printf("2) Ejecutar con HILOS (pthread)\n");
+        printf("\n=== SIMULACIÓN DE VENTAS DE LIBROS ===\n");
+        printf("1) Procesos  (%d procesos)\n", NUM_PROCESOS);
+        printf("2) Hilos     (%d hilos)\n",   NUM_HILOS);
         printf("0) Salir\n");
         printf("Seleccione una opción: ");
-        if (scanf("%d", &opc) != 1) break;
-
-        switch (opc) {
-            case 1: run_procesos();   break;
-            case 2: run_threads();    break;
-            case 0: printf("Saliendo...\n"); break;
-            default: printf("Opción inválida.\n"); break;
+        if (scanf("%d", &opcion) != 1) {
+            fprintf(stderr, "Entrada inválida\n");
+            exit(EXIT_FAILURE);
         }
-    } while (opc != 0);
+        switch (opcion) {
+            case 1:
+                ejecutarProcesos();
+                break;
+            case 2:
+                ejecutarHilos();
+                break;
+            case 0:
+                printf("Saliendo...\n");
+                break;
+            default:
+                printf("Opción inválida. Intente de nuevo.\n");
+        }
+    } while (opcion != 0);
 
     return 0;
 }

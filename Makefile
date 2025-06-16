@@ -3,17 +3,17 @@ CFLAGS = -Wall -std=c11 -pthread
 
 all: proyecto
 
-proyecto: main.o procesos_libros.o hilos_libros.o
-	$(CC) $(CFLAGS) -o proyecto main.o procesos_libros.o hilos_libros.o
+proyecto: main.o procesos_ventas.o hilos_ventas.o
+	$(CC) $(CFLAGS) -o proyecto main.o procesos_ventas.o hilos_ventas.o
 
-main.o: main.c procesos_libros.h hilos_libros.h
+main.o: main.c procesos_ventas.h hilos_ventas.h configuracion.h
 	$(CC) $(CFLAGS) -c main.c
 
-procesos_libros.o: procesos_libros.c procesos_libros.h
-	$(CC) $(CFLAGS) -c procesos_libros.c
+procesos_ventas.o: procesos_ventas.c procesos_ventas.h configuracion.h
+	$(CC) $(CFLAGS) -c procesos_ventas.c
 
-hilos_libros.o: hilos_libros.c hilos_libros.h
-	$(CC) $(CFLAGS) -c hilos_libros.c
+hilos_ventas.o: hilos_ventas.c hilos_ventas.h configuracion.h
+	$(CC) $(CFLAGS) -c hilos_ventas.c
 
 clean:
-	rm -f *.o proyecto
+	rm -f *.o proyecto reporte_*.txt
