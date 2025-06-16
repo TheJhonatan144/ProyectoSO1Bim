@@ -23,7 +23,7 @@ int main(void) {
 
         switch(opc){
             case 1:
-                run_processes(); // Llamada a la función de procesos
+                run_procesos(); // Llamada a la función de procesos
                 break;
             case 2:
                 run_threads(); // Llamada a la función de hilos
