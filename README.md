@@ -4,7 +4,7 @@ Proyecto de Sistemas Operativos 1er Bimestre
 # Simulación de Ventas de Libros: Procesos vs Hilos
 
 **Proyecto de Sistemas Operativos**  
-**Autores:** Jhona Torres (líder), Sabina Zabala, Sebastián Yánes, Geovanni ...  
+**Autores:** Jhona Torres (líder), Sabina Zabala, Sebastián Yánes, Geovanny Pereira
 **Fecha:** 17 Junio 2025
 
 ---
@@ -96,11 +96,11 @@ Verás un menú:
 ## Ejemplo de salida
 
 \`\`\`
-⏱ Inicio (procesos): Tue Jun 10 08:00:00 2025
-🟢 Proceso 12345 - Grupo A: Venta 1 = $45
+Inicio (procesos): Tue Jun 10 08:00:00 2025
+Proceso 12345 - Grupo A: Venta 1 = $45
 ...
-⏱ Fin (procesos): Tue Jun 10 08:01:30 2025
-⏳ Duración total (procesos): 90.123 segundos
+Fin (procesos): Tue Jun 10 08:01:30 2025
+Duración total (procesos): 90.123 segundos
 
 --- Resumen de Ventas ---
 Grupo A: $54,312.00
@@ -127,7 +127,6 @@ git push -u origin feature/mi-funcionalidad
 4. Abrir Pull Request en GitHub para revisión y merge.
 
 ---
-
 
 ## Licencia
 
