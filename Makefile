@@ -1,14 +1,14 @@
 CC       := gcc
 CFLAGS   := -std=c11 -Wall -pthread
-HDRS     := configuracion.h
+HDR      := config.h
 
 all: procesos hilos
 
-procesos: procesos.c configuracion.h
-	gcc -std=c11 -Wall -pthread procesos.c -o procesos
+procesos: procesos.c procesos.h $(HDR)
+	$(CC) $(CFLAGS) procesos.c -o procesos
 
-hilos: hilos.c configuracion.h
-	gcc -std=c11 -Wall -pthread hilos.c   -o hilos
+hilos: hilos.c hilos.h $(HDR)
+	$(CC) $(CFLAGS) hilos.c -o hilos
 
 clean:
 	rm -f procesos hilos reporte_*.txt
