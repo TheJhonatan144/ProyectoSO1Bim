@@ -1,13 +1,8 @@
-#ifndef CONFIGURACION_H
-#define CONFIGURACION_H
+// config.h
+#ifndef CONFIG_H
+#define CONFIG_H
 
-// Número total de libros vendidos a simular
-#define VENTAS_TOTALES   10000
+#define TOTAL_VENTAS 100000
+#define NUM_GRUPOS       8
 
-// Número de procesos a crear
-#define NUM_PROCESOS     1000
-
-// Número de hilos a crear
-#define NUM_HILOS        8
-
-#endif // CONFIGURACION_H
+#endif // CONFIG_H

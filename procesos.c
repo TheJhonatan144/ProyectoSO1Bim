@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <time.h>
-#include "config.h"
+#include "config.h"  
 
 static const char *grupos[NUM_GRUPOS] = {"A","B","C","D","E","F","G","H"};
 
