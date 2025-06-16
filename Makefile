@@ -1,19 +1,14 @@
-CC = gcc
-CFLAGS = -Wall -std=c11 -pthread
+CC       := gcc
+CFLAGS   := -std=c11 -Wall -pthread
+HDRS     := configuracion.h
 
-all: proyecto
+all: procesos hilos
 
-proyecto: main.o procesos_ventas.o hilos_ventas.o
-	$(CC) $(CFLAGS) -o proyecto main.o procesos_ventas.o hilos_ventas.o
+procesos: procesos_ventas.c procesos_ventas.h $(HDRS)
+	$(CC) $(CFLAGS) $< -o procesos
 
-main.o: main.c procesos_ventas.h hilos_ventas.h configuracion.h
-	$(CC) $(CFLAGS) -c main.c
-
-procesos_ventas.o: procesos_ventas.c procesos_ventas.h configuracion.h
-	$(CC) $(CFLAGS) -c procesos_ventas.c
-
-hilos_ventas.o: hilos_ventas.c hilos_ventas.h configuracion.h
-	$(CC) $(CFLAGS) -c hilos_ventas.c
+hilos: hilos_ventas.c hilos_ventas.h $(HDRS)
+	$(CC) $(CFLAGS) $< -o hilos
 
 clean:
-	rm -f *.o proyecto reporte_*.txt
+	rm -f procesos hilos reporte_*.txt
