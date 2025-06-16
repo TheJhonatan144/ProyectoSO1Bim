@@ -7,7 +7,7 @@
  */
 
 #include <stdio.h>
-#include <stdlin.h>
+#include <stdlib.h>
 #include "procesos_libros.h"
 #include "hilos_libros.h"
 
