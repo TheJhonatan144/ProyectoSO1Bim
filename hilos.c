@@ -1,5 +1,5 @@
 // hilos.c
-// Versión multihilo: pthreads + mutex
+// Versión multihilo: pthread + mutex para simular ventas de libros
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,24 +8,12 @@
 #include "config.h"
 #include "hilos.h"
 
-// Subtotales por grupo
+// Subtotales por grupo A–H
 static int subtotales[NUM_GRUPOS];
-// Mutex para proteger el arreglo compartido
+// Mutex para proteger el arreglo de subtotales
 static pthread_mutex_t mutex_subtotales;
 
-// Calcula delta = fin – inicio
-static void calcular_delta(const struct timespec *ini,
-                          const struct timespec *fin,
-                          struct timespec *delta) {
-    delta->tv_sec  = fin->tv_sec  - ini->tv_sec;
-    delta->tv_nsec = fin->tv_nsec - ini->tv_nsec;
-    if (delta->tv_nsec < 0) {
-        delta->tv_sec--;
-        delta->tv_nsec += 1000000000L;
-    }
-}
-
-// Alta resolución de tiempo
+// Tiempo monotónico de alta resolución en segundos
 static double tiempo_actual() {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -38,10 +26,9 @@ static void* procesar_por_hilo(void *arg) {
     int ventas_por_grupo = VENTAS_TOTALES / NUM_GRUPOS;
     int subtotal = 0;
     for (int i = 0; i < ventas_por_grupo; i++) {
-        // monto fijo por par/impar
+        // si el índice es par resta 8, si impar suma 15
         subtotal += (i % 2 == 0) ? -8 : +15;
     }
-    // Guarda en forma segura
     pthread_mutex_lock(&mutex_subtotales);
       subtotales[id] = subtotal;
     pthread_mutex_unlock(&mutex_subtotales);
@@ -67,12 +54,13 @@ void ejecutar_hilos(void) {
     for (int g = 0; g < NUM_GRUPOS; g++) {
         indices[g] = g;
         if (pthread_create(&hilos[g], NULL,
-                           procesar_por_hilo, &indices[g]) != 0) {
+                           procesar_por_hilo, &indices[g]) != 0)
+        {
             perror("pthread_create");
             exit(EXIT_FAILURE);
         }
     }
-    // Esperar
+    // Esperar finalización
     for (int g = 0; g < NUM_GRUPOS; g++)
         pthread_join(hilos[g], NULL);
 
@@ -96,6 +84,7 @@ void ejecutar_hilos(void) {
     pthread_mutex_destroy(&mutex_subtotales);
 }
 
+// Punto de entrada
 int main(void) {
     ejecutar_hilos();
     return 0;

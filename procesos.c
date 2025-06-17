@@ -1,5 +1,5 @@
 // procesos.c
-// Versión por procesos: fork() + semáforo para acceso exclusivo
+// Versión por procesos: fork() + semáforo para simular ventas de libros
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,19 +16,7 @@ static int *saldo_global;
 static int *num_transacciones;
 static sem_t *sem_mutex;
 
-// Calcula delta = fin – inicio
-static void calcular_delta(const struct timespec *ini,
-                          const struct timespec *fin,
-                          struct timespec *delta) {
-    delta->tv_sec  = fin->tv_sec  - ini->tv_sec;
-    delta->tv_nsec = fin->tv_nsec - ini->tv_nsec;
-    if (delta->tv_nsec < 0) {
-        delta->tv_sec--;
-        delta->tv_nsec += 1000000000L;
-    }
-}
-
-// Obtiene tiempo monotónico en segundos de alta resolución
+// Tiempo monotónico de alta resolución en segundos
 static double tiempo_actual() {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -37,7 +25,6 @@ static double tiempo_actual() {
 
 // Lógica que ejecuta cada proceso hijo
 static void procesar_por_proceso(int id_grupo) {
-    // Apertura de reporte en modo append
     FILE *f = fopen("reporte_procesos.txt","a");
     if (!f) { perror("fopen hijo"); exit(EXIT_FAILURE); }
 
@@ -48,7 +35,7 @@ static void procesar_por_proceso(int id_grupo) {
             sem_post(sem_mutex);
             break;
         }
-        // Simula venta: pares restan 8, nones suman 15
+        // Simula venta: si es par resta 8, si es impar suma 15
         if ((*num_transacciones % 2) == 0) {
             if (*saldo_global >= 8) *saldo_global -= 8;
         } else {
@@ -57,14 +44,12 @@ static void procesar_por_proceso(int id_grupo) {
         (*num_transacciones)++;
         sem_post(sem_mutex);
     }
-    // Informe parcial
-    fprintf(f, "Grupo %c: saldo parcial = %d\n",
-            'A'+id_grupo, *saldo_global);
+    fprintf(f, "Grupo %c:\t%d\n", 'A'+id_grupo, *saldo_global);
     fclose(f);
 }
 
 void ejecutar_procesos(void) {
-    // Reserva memoria compartida
+    // Reservar memoria compartida
     saldo_global = mmap(NULL,sizeof(int),
                         PROT_READ|PROT_WRITE,
                         MAP_SHARED|MAP_ANONYMOUS,
@@ -78,9 +63,9 @@ void ejecutar_procesos(void) {
                      MAP_SHARED|MAP_ANONYMOUS,
                      -1,0);
 
-    *saldo_global = 1000;           // saldo inicial
-    *num_transacciones = 0;        // contador de transacciones
-    sem_init(sem_mutex,1,1);        // semáforo en 1
+    *saldo_global = 1000;
+    *num_transacciones = 0;
+    sem_init(sem_mutex,1,1);
 
     // Crear o truncar reporte
     FILE *f = fopen("reporte_procesos.txt","w");
@@ -92,11 +77,11 @@ void ejecutar_procesos(void) {
 
     double t_ini = tiempo_actual();
 
-    // Lanzar procesos
+    // Lanzar procesos hijos
     for (int g = 0; g < NUM_GRUPOS; g++) {
         pid_t pid = fork();
         if (pid < 0) { perror("fork"); exit(EXIT_FAILURE); }
-        if (pid == 0) {  // hijo
+        if (pid == 0) {
             procesar_por_proceso(g);
             munmap(saldo_global,sizeof(int));
             munmap(num_transacciones,sizeof(int));
@@ -104,12 +89,12 @@ void ejecutar_procesos(void) {
             exit(EXIT_SUCCESS);
         }
     }
-    // Padre espera
+    // Esperar hijos
     for (int i = 0; i < NUM_GRUPOS; i++) wait(NULL);
 
     double t_fin = tiempo_actual();
 
-    // Registro final
+    // Resumen final
     f = fopen("reporte_procesos.txt","a");
     fprintf(f, "\nNúmero de grupos: %d\n", NUM_GRUPOS);
     fprintf(f, "Saldo final (total vendido): %d\n", *saldo_global);
@@ -118,13 +103,13 @@ void ejecutar_procesos(void) {
             t_fin - t_ini);
     fclose(f);
 
-    // Limpieza
     sem_destroy(sem_mutex);
     munmap(saldo_global,sizeof(int));
     munmap(num_transacciones,sizeof(int));
     munmap(sem_mutex,sizeof(sem_t));
 }
 
+// Punto de entrada
 int main(void) {
     ejecutar_procesos();
     return 0;
