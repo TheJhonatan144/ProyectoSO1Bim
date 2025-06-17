@@ -24,28 +24,51 @@ static double tiempo_actual() {
 }
 
 // Lógica que ejecuta cada proceso hijo
+// Función que ejecuta cada proceso hijo para simular ventas de libros
 static void procesar_por_proceso(int id_grupo) {
-    FILE *f = fopen("reporte_procesos.txt","a"); 
-    if (!f) { perror("fopen hijo"); exit(EXIT_FAILURE); } // Abrir archivo de reporte en modo append 
-    // Cada grupo procesa una parte de las ventas totales
+    // Abrir el archivo de reporte en modo “append” para añadir líneas
+    FILE *f = fopen("reporte_procesos.txt", "a");
+    if (!f) {
+        perror("Error al abrir reporte en el proceso hijo");
+        exit(EXIT_FAILURE);
+    }
 
+    // Inicializar la semilla de rand() usando el PID para asegurar variación entre procesos
+    srand(time(NULL) ^ getpid());
+
+    // Cuántas ventas debe atender este grupo
     int ventas_por_grupo = VENTAS_TOTALES / NUM_GRUPOS;
+    // Acumulador local de lo vendido por este grupo
+    int subtotal_local = 0;
+
+    // Bucle: cada iteración simula una venta
     for (int i = 0; i < ventas_por_grupo; i++) {
+        // Solicitar acceso exclusivo al saldo y al contador
         sem_wait(sem_mutex);
-        if (*num_transacciones >= VENTAS_TOTALES) { // Verificar si ya se alcanzó el total de ventas
-            sem_post(sem_mutex);                    // Liberar semáforo antes de salir
+
+        // Si ya se alcanzó el total global de ventas, liberar y salir
+        if (*num_transacciones >= VENTAS_TOTALES) {
+            sem_post(sem_mutex);
             break;
         }
-        // Simula venta: si es par resta 8, si es impar suma 15
-        if ((*num_transacciones % 2) == 0) { 
-            if (*saldo_global >= 8) *saldo_global -= 8; // Resta 8 si hay suficiente saldo
-        } else {
-            *saldo_global += 15;                        // Suma 15 independientemente del saldo
-        }
-        (*num_transacciones)++; // Incrementar el contador de transacciones
-        sem_post(sem_mutex);    // Liberar semáforo después de actualizar saldo y transacciones
+
+        // Generar un precio aleatorio entre $10 y $100
+        int precio = rand() % 91 + 10;
+        // Sumar al acumulado local
+        subtotal_local += precio;
+        // Aumentar el saldo global con el precio de esta venta
+        *saldo_global += precio;
+
+        // Incrementar el contador global de transacciones
+        (*num_transacciones)++;
+        // Liberar el semáforo para que otro proceso pueda acceder
+        sem_post(sem_mutex);
     }
-    fprintf(f, "Grupo %c:\t%d\n", 'A'+id_grupo, *saldo_global); /// Escribir el saldo parcial del grupo en el reporte
+
+    // Escribir en el reporte el subtotal que vendió este grupo
+    fprintf(f, "Grupo %c:\tSubtotal = $%d\n", 'A' + id_grupo, subtotal_local);
+
+    // Cerrar el archivo de reporte
     fclose(f);
 }
 
