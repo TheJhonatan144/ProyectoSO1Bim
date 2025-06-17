@@ -2,6 +2,10 @@
 
 Proyecto de Sistemas Operativos 2025A – EPN  
 Comparativa entre fork() + semáforo y pthread + mutex
+Integrantes: Sabina Zabala
+             Geovanni Pereira
+             Sebastian Yánez
+             Jhonatan Torres 
 
 ## Objetivo
 Explorar las diferencias de tiempo de ejecución entre:
