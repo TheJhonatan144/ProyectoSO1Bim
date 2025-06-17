@@ -28,7 +28,7 @@ README.md       # documentación
 
 1. Dar permiso al script:
    ```bash
-   chmod +x start.sh
+   chmod +x inicio.sh
    ```
 2. Compilar manual:
    ```bash
@@ -41,7 +41,7 @@ README.md       # documentación
    ```
 4. O usar el script:
    ```bash
-   ./start.sh
+   ./inicio.sh
    ```
 5. Limpiar:
    ```bash
