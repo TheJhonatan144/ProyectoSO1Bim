@@ -1,8 +1,7 @@
-#ifndef HILOS_VENTAS_H
-#define HILOS_VENTAS_H
+#ifndef HILOS_H
+#define HILOS_H
 
-// Ejecuta la simulación de ventas usando pthreads
-// y genera un archivo reporte_hilos.txt
-void ejecutarHilos(void);
+// Ejecuta la simulación usando hilos (pthread + mutex)
+void ejecutar_hilos(void);
 
-#endif // HILOS_VENTAS_H
+#endif // HILOS_H

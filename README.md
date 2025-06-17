@@ -1,133 +1,58 @@
-# ProyectoSO1Bim
-Proyecto de Sistemas Operativos 1er Bimestre
-
 # Simulación de Ventas de Libros: Procesos vs Hilos
 
-**Proyecto de Sistemas Operativos**  
-**Autores:** Jhona Torres (líder), Sabina Zabala, Sebastián Yánes, Geovanny Pereira
-**Fecha:** 17 Junio 2025
+Proyecto de Sistemas Operativos 2025A – EPN  
+Comparativa entre fork() + semáforo y pthread + mutex
 
----
+## Objetivo
+Explorar las diferencias de tiempo de ejecución entre:
+- **Procesos mono-hilo** (fork + semáforo)
+- **Proceso multi-hilo** (pthread + mutex)
 
-## Descripción
+Simulando VENTAS_TOTALES transacciones repartidas en NUM_GRUPOS (A–H).
 
-Este proyecto compara dos enfoques de concurrencia en C mediante la **simulación de ventas de libros a gran escala**:
-
-- **Procesos**: usando `fork()` y **pipes** para comunicación.
-- **Hilos**: usando **pthread** y **mutex** para sincronización.
-
-Se mide y analiza empíricamente el rendimiento de ambos métodos.
-
----
-
-## Características
-
-- Menú interactivo para elegir ejecución por procesos o hilos.
-- Timestamps de inicio y fin (legibles con `ctime`).
-- Medición de duración total con `clock_gettime`.
-- Informe detallado de ventas por grupo (A–H) y resumen.
-- Código modular y comentado.
-- Uso de mecanismos de sincronización adecuados (pipes y mutex).
-
----
-
-## Estructura del repositorio
-
-\`\`\`text
-RepositorioGit/
-├── main.c                  # Menú y punto de entrada
-├── procesos_libros.c       # Simulación con procesos
-├── procesos_libros.h       # Cabecera para procesos
-├── hilos_libros.c          # Simulación con hilos
-├── hilos_libros.h          # Cabecera para hilos
-├── Makefile                # Reglas de compilación
-├── .gitignore              # Archivos ignorados por Git
-└── README.md               # Documentación del proyecto
-\`\`\`
-
----
-
-## Requisitos
-
-- GCC (o Clang) con soporte C11  
-- Biblioteca **pthread**  
-- Git para control de versiones  
-- Entorno UNIX (Linux, macOS) o **Windows** con MinGW/WSL
-
----
-
-## Instalación y compilación
-
-Clona el repositorio:
-\`\`\`bash
-git clone https://github.com/tu_usuario/Proyecto-SO.git
-cd Proyecto-SO
-\`\`\`
-
-Compila todo con:
-\`\`\`bash
-make
-\`\`\`
-Esto generará el ejecutable \`proyecto\`.
-
----
+## Estructura
+```
+config.h
+procesos.h/.c   # fork() + semáforo
+hilos.h/.c      # pthread + mutex
+start.sh        # script de compilación y ejecución
+Makefile        # compilación y limpieza
+README.md       # documentación
+```
 
 ## Uso
 
-Ejecuta:
-\`\`\`bash
-./proyecto
-\`\`\`
+1. Dar permiso al script:
+   ```bash
+   chmod +x start.sh
+   ```
+2. Compilar manual:
+   ```bash
+   make
+   ```
+3. Ejecutar:
+   ```bash
+   ./procesos    # genera reporte_procesos.txt
+   ./hilos       # genera reporte_hilos.txt
+   ```
+4. O usar el script:
+   ```bash
+   ./start.sh
+   ```
+5. Limpiar:
+   ```bash
+   make clean
+   ```
 
-Verás un menú:
-\`\`\`
-=== Simulación de Ventas de Libros ===
-1) Ejecutar con PROCESOS (fork)
-2) Ejecutar con HILOS (pthread)
-0) Salir
-\`\`\`
+## Reportes
+Los archivos `reporte_procesos.txt` y `reporte_hilos.txt` muestran:
+- Subtotal por grupo (A–H)
+- Número de grupos
+- Total vendido
+- Total de transacciones
+- Tiempo de ejecución
 
-- Elige **1** para procesos.  
-- Elige **2** para hilos.  
-- Elige **0** para salir.
-
----
-
-## Ejemplo de salida
-
-\`\`\`
-Inicio (procesos): Tue Jun 10 08:00:00 2025
-Proceso 12345 - Grupo A: Venta 1 = $45
-...
-Fin (procesos): Tue Jun 10 08:01:30 2025
-Duración total (procesos): 90.123 segundos
-
---- Resumen de Ventas ---
-Grupo A: $54,312.00
-...
-\`\`\`
-
----
-
-## Colaboración
-
-1. Crear rama nueva:
-\`\`\`bash
-git checkout -b feature/mi-funcionalidad
-\`\`\`
-2. Hacer cambios y commitear:
-\`\`\`bash
-git add .
-git commit -m "Descripción del cambio"
-\`\`\`
-3. Enviar rama al remoto:
-\`\`\`bash
-git push -u origin feature/mi-funcionalidad
-\`\`\`
-4. Abrir Pull Request en GitHub para revisión y merge.
-
----
-
-## Licencia
-
-Este proyecto está bajo licencia **MIT**.
+## Conclusiones
+- Hilos más eficientes al manejar grandes volúmenes de transacciones por su menor overhead.
+- Procesos ofrecen aislamiento y mayor seguridad de datos.
+- Sincronización con semáforo vs mutex para evitar condiciones de carrera.

@@ -1,8 +1,7 @@
-#ifndef PROCESOS_VENTAS_H
-#define PROCESOS_VENTAS_H
+#ifndef PROCESOS_H
+#define PROCESOS_H
 
-// Ejecuta la simulación de ventas usando procesos (fork + pipes)
-// y genera un archivo reporte_procesos.txt
-void ejecutarProcesos(void);
+// Ejecuta la simulación usando procesos (fork + semáforo)
+void ejecutar_procesos(void);
 
-#endif // PROCESOS_VENTAS_H
+#endif // PROCESOS_H

@@ -1,13 +1,12 @@
-CC       := gcc
-CFLAGS   := -std=c11 -Wall -pthread
-HDR      := config.h
+CC      := gcc
+CFLAGS  := -std=c11 -Wall -pthread
 
 all: procesos hilos
 
-procesos: procesos.c procesos.h $(HDR)
+procesos: procesos.c procesos.h config.h
 	$(CC) $(CFLAGS) procesos.c -o procesos
 
-hilos: hilos.c hilos.h $(HDR)
+hilos: hilos.c hilos.h config.h
 	$(CC) $(CFLAGS) hilos.c -o hilos
 
 clean:
