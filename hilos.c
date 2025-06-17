@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <time.h>
 #include "config.h" // Define NUM_GRUPOS y VENTAS_TOTALES
-#include "hilos.h" // Prototipos necesarios
+#include "hilos.h" // Expone ejecutar_hilos()
 
 // Subtotales por grupo A–H
 static int subtotales[NUM_GRUPOS];

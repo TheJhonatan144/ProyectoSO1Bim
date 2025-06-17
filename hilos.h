@@ -1,3 +1,4 @@
+//evitan que se incluysn dos veces y provoque errores.
 #ifndef HILOS_H
 #define HILOS_H
 
