@@ -72,8 +72,10 @@ void ejecutar_hilos(void) {
     // Crear un hilo por grupo
     for (int g = 0; g < NUM_GRUPOS; g++) {
         indices[g] = g; // Asignar ID de grupo a cada hilo
+        // Crear el hilo y pasarle su ID como argumento
+        // Si pthread_create falla, imprime el error y termina el programa
         if (pthread_create(&hilos[g], NULL,
-                           procesar_por_hilo, &indices[g]) != 0)
+                           procesar_por_hilo, &indices[g]) != 0) 
         {
             perror("pthread_create");
             exit(EXIT_FAILURE); // Si falla la creación del hilo, termina el programa
