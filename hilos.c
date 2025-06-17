@@ -43,6 +43,9 @@ static void* procesar_por_hilo(void *arg) {
     }
 
     // 5) Sección crítica: guardar el subtotal en el arreglo compartido
+    // Problema de sincronización: Usar mutex para evitar condiciones de carrera en subtotales
+    // Cada hilo bloquea el mutex antes de escribir su subtotal
+    // y lo libera al terminar, asegurando que solo un hilo escriba a la vez
     pthread_mutex_lock(&mutex_subtotales);
       subtotales[id] = subtotal;
     pthread_mutex_unlock(&mutex_subtotales);
