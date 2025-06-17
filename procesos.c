@@ -124,3 +124,8 @@ void ejecutar_procesos(void) {
     munmap(num_transacciones,sizeof(int));
     munmap(sem_mutex,sizeof(sem_t));
 }
+
+int main(void) {
+    ejecutar_procesos();
+    return 0;
+}

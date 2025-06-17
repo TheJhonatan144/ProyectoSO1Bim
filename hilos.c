@@ -95,3 +95,8 @@ void ejecutar_hilos(void) {
 
     pthread_mutex_destroy(&mutex_subtotales);
 }
+
+int main(void) {
+    ejecutar_hilos();
+    return 0;
+}
