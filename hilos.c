@@ -5,18 +5,19 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
-#include "config.h"
-#include "hilos.h"
+#include "config.h" // Define NUM_GRUPOS y VENTAS_TOTALES
+#include "hilos.h" // Prototipos necesarios
 
 // Subtotales por grupo A–H
 static int subtotales[NUM_GRUPOS];
 // Mutex para proteger el arreglo de subtotales
 static pthread_mutex_t mutex_subtotales;
 
-// Tiempo monotónico de alta resolución en segundos
+// Función para obtener el tiempo actual en segundos
+// Tiempo monotónico de alta precisión 
 static double tiempo_actual() {
     struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
+    clock_gettime(CLOCK_MONOTONIC, &ts); // Evita problemas con cambios de hora
     return ts.tv_sec + ts.tv_nsec / 1e9;
 }
 
@@ -26,21 +27,24 @@ static void* procesar_por_hilo(void *arg) {
     int ventas_por_grupo = VENTAS_TOTALES / NUM_GRUPOS;
     int subtotal = 0;
     for (int i = 0; i < ventas_por_grupo; i++) {
-        // si el índice es par resta 8, si impar suma 15
+        // Simula ventas: por cada índice suma o resta un valor según sea par o impar
+        // Si el índice es par resta 8, si impar suma 15
         subtotal += (i % 2 == 0) ? -8 : +15;
     }
+    // Sección crítica: guardar subtotal protegido por mutex
     pthread_mutex_lock(&mutex_subtotales);
       subtotales[id] = subtotal;
     pthread_mutex_unlock(&mutex_subtotales);
     return NULL;
 }
 
+// Función principal que gestiona la creación y sincronización de los hilos
 void ejecutar_hilos(void) {
-    pthread_t hilos[NUM_GRUPOS];
-    int indices[NUM_GRUPOS];
-    pthread_mutex_init(&mutex_subtotales, NULL);
+    pthread_t hilos[NUM_GRUPOS]; // Arreglo de identificadores de hilos
+    int indices[NUM_GRUPOS]; // IDs para pasar a cada hilo
+    pthread_mutex_init(&mutex_subtotales, NULL); // Inicializar mutex
 
-    // Iniciar reporte
+     // Crear y preparar el archivo de reporte
     FILE *f = fopen("reporte_hilos.txt","w");
     if (!f) { perror("fopen hilos"); exit(EXIT_FAILURE); }
     fprintf(f, "SIMULACIÓN VENTAS DE LIBROS (Hilos)\n");
@@ -48,9 +52,9 @@ void ejecutar_hilos(void) {
     fprintf(f, "Grupo\tSubtotal\n");
     fclose(f);
 
-    double t_ini = tiempo_actual();
+    double t_ini = tiempo_actual(); // Inicio de medición de tiempo
 
-    // Crear hilos
+    // Crear un hilo por grupo
     for (int g = 0; g < NUM_GRUPOS; g++) {
         indices[g] = g;
         if (pthread_create(&hilos[g], NULL,
@@ -60,17 +64,18 @@ void ejecutar_hilos(void) {
             exit(EXIT_FAILURE);
         }
     }
-    // Esperar finalización
+   // Esperar a que todos los hilos terminen
     for (int g = 0; g < NUM_GRUPOS; g++)
         pthread_join(hilos[g], NULL);
 
-    double t_fin = tiempo_actual();
+    double t_fin = tiempo_actual(); // Fin de medición de tiempo
 
-    // Guardar subtotales y resumen
+    // Guardar resultados en archivo
     f = fopen("reporte_hilos.txt","a");
     for (int g = 0; g < NUM_GRUPOS; g++) {
         fprintf(f, " %c\t%d\n", 'A'+g, subtotales[g]);
     }
+    // Calcular y guardar resumen
     fprintf(f, "\nNúmero de grupos: %d\n", NUM_GRUPOS);
     int total_vendido = 0;
     for (int g = 0; g < NUM_GRUPOS; g++)
@@ -81,11 +86,11 @@ void ejecutar_hilos(void) {
             t_fin - t_ini);
     fclose(f);
 
-    pthread_mutex_destroy(&mutex_subtotales);
+    pthread_mutex_destroy(&mutex_subtotales); // Liberar recursos del mutex
 }
 
-// Punto de entrada
+// Punto de entrada del programa
 int main(void) {
-    ejecutar_hilos();
+    ejecutar_hilos(); // Llama a la función principal que gestiona los hilos
     return 0;
 }
