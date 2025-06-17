@@ -19,7 +19,7 @@ Simulando VENTAS_TOTALES transacciones repartidas en NUM_GRUPOS (A–H).
 config.h
 procesos.h/.c   # fork() + semáforo
 hilos.h/.c      # pthread + mutex
-start.sh        # script de compilación y ejecución
+inicio.sh        # script de compilación y ejecución
 Makefile        # compilación y limpieza
 README.md       # documentación
 ```
