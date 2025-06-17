@@ -37,6 +37,7 @@ static void* procesar_por_hilo(void *arg) {
     pthread_mutex_unlock(&mutex_subtotales);
     return NULL;
 }
+
 // Función principal que gestiona la creación y sincronización de los hilos
 void ejecutar_hilos(void) {
     pthread_t hilos[NUM_GRUPOS]; // Arreglo de identificadores de hilos
