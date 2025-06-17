@@ -21,20 +21,32 @@ static double tiempo_actual() {
     return ts.tv_sec + ts.tv_nsec / 1e9;
 }
 
-// Función que ejecuta cada hilo
+// Rutina que ejecuta cada hilo: simula ventas de libros con precios aleatorios
 static void* procesar_por_hilo(void *arg) {
+    // 1) Obtener el ID de grupo (0..NUM_GRUPOS-1) desde el argumento
     int id = *(int*)arg;
+
+    // 2) Calcular cuántas ventas procesa este hilo
     int ventas_por_grupo = VENTAS_TOTALES / NUM_GRUPOS;
-    int subtotal = 0;
+
+    // 3) Inicializar la semilla del generador de números aleatorios
+    //    mezclando el tiempo y el ID del hilo para mayor aleatoriedad
+    srand((unsigned)time(NULL) ^ (unsigned long)pthread_self());
+
+    int subtotal = 0;  // Acumulador local de precios
+
+    // 4) Bucle de simulación de ventas
     for (int i = 0; i < ventas_por_grupo; i++) {
-        // Simula ventas: por cada índice suma o resta un valor según sea par o impar
-        // Si el índice es par resta 8, si impar suma 15
-        subtotal += (i % 2 == 0) ? -8 : +15;
+        // Generar un precio aleatorio entre 10 y 100
+        int precio = rand() % 91 + 10;
+        subtotal += precio;
     }
-    // Sección crítica: guardar subtotal protegido por mutex
+
+    // 5) Sección crítica: guardar el subtotal en el arreglo compartido
     pthread_mutex_lock(&mutex_subtotales);
       subtotales[id] = subtotal;
     pthread_mutex_unlock(&mutex_subtotales);
+
     return NULL;
 }
 
