@@ -1,5 +1,9 @@
 # start.sh — Compila y ejecuta ambas versiones, luego muestra reportes
 
+# 1. Compila los programas de procesos e hilos.
+# 2. Ejecuta las simulaciones.
+# 3. Abre los reportes generados en terminales separadas.
+# Se ejecut de forma secuencial y autimática para facilitar la comparación.
 set -e
 
 echo "Compilando procesos..."

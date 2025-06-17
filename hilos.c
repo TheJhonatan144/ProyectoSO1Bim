@@ -46,22 +46,22 @@ void ejecutar_hilos(void) {
 
      // Crear y preparar el archivo de reporte
     FILE *f = fopen("reporte_hilos.txt","w");
-    if (!f) { perror("fopen hilos"); exit(EXIT_FAILURE); }
+    if (!f) { perror("fopen hilos"); exit(EXIT_FAILURE); } // Manejo de errores al abrir el archivo
     fprintf(f, "SIMULACIÓN VENTAS DE LIBROS (Hilos)\n");
     fprintf(f, "Grupos A–H | Total: %d ventas\n\n", VENTAS_TOTALES);
     fprintf(f, "Grupo\tSubtotal\n");
-    fclose(f);
+    fclose(f); 
 
     double t_ini = tiempo_actual(); // Inicio de medición de tiempo
 
     // Crear un hilo por grupo
     for (int g = 0; g < NUM_GRUPOS; g++) {
-        indices[g] = g;
+        indices[g] = g; // Asignar ID de grupo a cada hilo
         if (pthread_create(&hilos[g], NULL,
                            procesar_por_hilo, &indices[g]) != 0)
         {
             perror("pthread_create");
-            exit(EXIT_FAILURE);
+            exit(EXIT_FAILURE); // Si falla la creación del hilo, termina el programa
         }
     }
    // Esperar a que todos los hilos terminen
@@ -73,13 +73,13 @@ void ejecutar_hilos(void) {
     // Guardar resultados en archivo
     f = fopen("reporte_hilos.txt","a");
     for (int g = 0; g < NUM_GRUPOS; g++) {
-        fprintf(f, " %c\t%d\n", 'A'+g, subtotales[g]);
+        fprintf(f, " %c\t%d\n", 'A'+g, subtotales[g]); // Escribir subtotales de cada grupo
     }
     // Calcular y guardar resumen
     fprintf(f, "\nNúmero de grupos: %d\n", NUM_GRUPOS);
     int total_vendido = 0;
     for (int g = 0; g < NUM_GRUPOS; g++)
-        total_vendido += subtotales[g];
+        total_vendido += subtotales[g]; // Sumar subtotales para obtener total vendido
     fprintf(f, "Total vendido: %d\n", total_vendido);
     fprintf(f, "Total transacciones: %d\n", VENTAS_TOTALES);
     fprintf(f, "Tiempo de ejecución: %.6f segundos\n",
@@ -92,5 +92,5 @@ void ejecutar_hilos(void) {
 // Punto de entrada del programa
 int main(void) {
     ejecutar_hilos(); // Llama a la función principal que gestiona los hilos
-    return 0;
+    return 0; 
 }
